@@ -11,6 +11,12 @@ const Formulario = ({ patients, setPatients }) => {
 
     const [error, setError] = useState(false);
 
+    const idGeneration = () => {
+        const random = Math.random().toString(36);
+        console.log(random);
+        return random;
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
         //Form validation
@@ -28,6 +34,7 @@ const Formulario = ({ patients, setPatients }) => {
             email,
             date,
             symp,
+            id: idGeneration(),
         };
 
         setPatients([...patients, patientObj]);
@@ -56,11 +63,7 @@ const Formulario = ({ patients, setPatients }) => {
                 action=""
                 className="bg-white shadow-md rounded-lg py-10 px-5 mb-10"
             >
-                {error && (
-                    <Error>
-                        All fields are required
-                    </Error>
-                )}
+                {error && <Error>All fields are required</Error>}
 
                 {/*Pet name*/}
                 <div className="mb-5">
