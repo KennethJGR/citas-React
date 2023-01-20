@@ -2,7 +2,7 @@ import React from "react";
 import { useState, useEffect } from "react";
 import Error from "./Error";
 
-const Formulario = ({ patients, setPatients }) => {
+const Formulario = ({ patients, setPatients, patient, setPatient }) => {
     const [name, setName] = useState("");
     const [owner, setOwner] = useState("");
     const [email, setEmail] = useState("");
@@ -11,10 +11,21 @@ const Formulario = ({ patients, setPatients }) => {
 
     const [error, setError] = useState(false);
 
+    useEffect(() => {
+        if (Object.keys(patient).length) {
+            setName(patient.name);
+            setOwner(patient.owner);
+            setEmail(patient.email);
+            setDate(patient.date);
+            setSymp(patient.symp);
+        }
+    }, [patient]);
+
     const idGeneration = () => {
         const random = Math.random().toString(36);
-        console.log(random);
-        return random;
+        const date = Date.now().toString(36);
+
+        return random + date;
     };
 
     const handleSubmit = (e) => {
@@ -34,13 +45,25 @@ const Formulario = ({ patients, setPatients }) => {
             email,
             date,
             symp,
-            id: idGeneration(),
         };
 
-        setPatients([...patients, patientObj]);
+        if (patient.id) {
+            //editing the patient
+            patientObj.id = patient.id;
+
+            const updatedPatients = patients.map((patientState) =>
+                patientState.id === patient.id ? patientObj : patientState
+            );
+
+            setPatients(updatedPatients);
+            setPatient({});
+        } else {
+            //new patient
+            patientObj.id = idGeneration();
+            setPatients([...patients, patientObj]);
+        }
 
         //Form Reset
-
         setName("");
         setOwner("");
         setEmail("");
@@ -170,7 +193,7 @@ const Formulario = ({ patients, setPatients }) => {
                 <input
                     type="submit"
                     className="bg-indigo-600 w-full p-3 text-white uppercase font-bold rounded-md shadow-lg hover:bg-indigo-700 cursor-pointer transition-all"
-                    value="Send patient"
+                    value={patient.id ? "Save changes" : "Send patient"}
                 />
             </form>
         </div>
